@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # 1. Server HÀ ĐÔNG (Trụ sở chính) - Cổng 5435
+  node_hadong:
+    image: postgres:latest
+    container_name: db_hadong
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: qldt_hadong
+    ports:
+      - "5435:5432"
+    volumes:
+      - hadong_data:/var/lib/postgresql
+
+  # 2. Server CẦU GIẤY (Cơ sở phụ 1) - Cổng 5433
+  node_caugiay:
+    image: postgres:latest
+    container_name: db_caugiay
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: qldt_caugiay
+    ports:
+      - "5433:5432"
+    volumes:
+      - caugiay_data:/var/lib/postgresql
+
+  # 3. Server TRỤC NGỌC (Cơ sở phụ 2) - Cổng 5434
+  node_trucngoc:
+    image: postgres:latest
+    container_name: db_trucngoc
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: qldt_trucngoc
+    ports:
+      - "5434:5432"
+    volumes:
+      - trucngoc_data:/var/lib/postgresql
+
+volumes:
+  hadong_data:
+  caugiay_data:
+  trucngoc_data:
