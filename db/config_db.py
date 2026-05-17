@@ -4,13 +4,13 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from models import Base
+from model import Base
 
 # Cấu hình kết nối tới 3 cơ sở bằng SQLAlchemy URL
 DB_URLS = {
     "HD": "postgresql+psycopg2://postgres:123456@localhost:5435/qldt_hadong",
     "CG": "postgresql+psycopg2://postgres:123456@localhost:5433/qldt_caugiay",
-    "TN": "postgresql+psycopg2://postgres:123456@localhost:5434/qldt_trucngoc",
+    "NT": "postgresql+psycopg2://postgres:123456@localhost:5434/qldt_ngoctruc",
 }
 
 engines = {}
@@ -33,13 +33,13 @@ def get_db(site_code):
 
 def init_all_dbs():
     """Tạo toàn bộ các bảng trong models.py trên cả 3 Server."""
-    print("🚀 Đang khởi tạo các bảng CSDL trên toàn hệ thống phân tán...")
+    print("Dang khoi tao cac bang CSDL tren toan he thong phan tan...")
     for site, engine in engines.items():
         try:
             Base.metadata.create_all(bind=engine)
-            print(f"✅ Đã tạo bảng thành công tại Node: {site}")
+            print(f"Da tao bang thanh cong tai Node: {site}")
         except Exception as e:
-            print(f"❌ Lỗi khi tạo bảng tại Node {site}: {e}")
+            print(f"Loi khi tao bang tai Node {site}: {e}")
 
 if __name__ == "__main__":
     init_all_dbs()

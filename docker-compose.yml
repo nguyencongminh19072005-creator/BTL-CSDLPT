@@ -27,20 +27,20 @@ services:
     volumes:
       - caugiay_data:/var/lib/postgresql
 
-  # 3. Server TRỤC NGỌC (Cơ sở phụ 2) - Cổng 5434
-  node_trucngoc:
+  # 3. Server NGỌC TRỤC (Cơ sở phụ 2) - Cổng 5434
+  node_ngoctruc:
     image: postgres:latest
-    container_name: db_trucngoc
+    container_name: db_ngoctruc
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123456
-      POSTGRES_DB: qldt_trucngoc
+      POSTGRES_DB: qldt_ngoctruc
     ports:
       - "5434:5432"
     volumes:
-      - trucngoc_data:/var/lib/postgresql
+      - ngoctruc_data:/var/lib/postgresql
 
 volumes:
   hadong_data:
   caugiay_data:
-  trucngoc_data:
+  ngoctruc_data:

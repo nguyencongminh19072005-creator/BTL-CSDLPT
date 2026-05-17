@@ -6,14 +6,15 @@ from datetime import timedelta
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from faker import Faker
-from models import engines, SessionLocal, Base, CoSo, Khoa, HocPhan, SinhVien, GiangVien, PhongHoc, LopHocPhan, LichHoc, DangKy
+from config_db import engines, SessionLocals as SessionLocal
+from model import Base, CoSo, Khoa, HocPhan, SinhVien, GiangVien, PhongHoc, LopHocPhan, LichHoc, DangKy
 
 # Khởi tạo Faker tiếng Việt
 fake = Faker('vi_VN')
 
 def reset_dbs():
     """Hàm này xóa sạch cấu trúc cũ và tạo lại để đảm bảo quá trình test seed data không bị trùng lặp"""
-    print("🗑️ Đang xóa toàn bộ cấu trúc và dữ liệu cũ trên 3 Server...")
+    print("Dang xoa toan bo cau truc va du lieu cu tren 3 Server...")
     for site, engine in engines.items():
         Base.metadata.drop_all(engine)
         Base.metadata.create_all(engine)
@@ -22,12 +23,12 @@ def reset_dbs():
 def seed_data():
     reset_dbs()
     
-    print("\n🌱 Bắt đầu tạo dữ liệu mẫu...")
+    print("\nBat dau tao du lieu mau...")
     
     dbs = {
         'HD': SessionLocal['HD'](),
         'CG': SessionLocal['CG'](),
-        'TN': SessionLocal['TN']()
+        'NT': SessionLocal['NT']()
     }
     
     # =========================================================
@@ -38,7 +39,7 @@ def seed_data():
     cosos_data = [
         {"ma_co_so": "HD", "ten_co_so": "Cơ sở Hà Đông", "dia_chi": "Hà Đông, Hà Nội"},
         {"ma_co_so": "CG", "ten_co_so": "Cơ sở Cầu Giấy", "dia_chi": "Cầu Giấy, Hà Nội"},
-        {"ma_co_so": "TN", "ten_co_so": "Cơ sở Trục Ngọc", "dia_chi": "Trục Ngọc, Nam Định"}
+        {"ma_co_so": "NT", "ten_co_so": "Cơ sở Ngọc Trục", "dia_chi": "Ngọc Trục, Nam Định"}
     ]
     
     khoas_data = [
@@ -67,7 +68,7 @@ def seed_data():
             print(f"  -> Đã nhân bản danh mục thành công tại Node {site_code}")
         except Exception as e:
             db.rollback()
-            print(f"  ❌ Lỗi tạo danh mục tại Node {site_code}: {e}")
+            print(f"  Loi tao danh muc tai Node {site_code}: {e}")
 
     # =========================================================
     # 2. DỮ LIỆU PHÂN MẢNH VÀ NGHIỆP VỤ (Sinh viên, GV, Đăng ký, Lịch học)
@@ -118,7 +119,7 @@ def seed_data():
             lhp_list = []
             for i in range(1, 11):
                 # Demo Giảng viên dạy chéo (Location Transparency)
-                # Có 20% khả năng một lớp ở CG hoặc TN sẽ do giáo viên "GV_HD_01" (Hà Đông) sang dạy
+                # Có 20% khả năng một lớp ở CG hoặc NT sẽ do giáo viên "GV_HD_01" (Hà Đông) sang dạy
                 if site_code != 'HD' and random.random() < 0.2:
                     ma_gv_chon = "GV_HD_01"
                 else:
@@ -162,22 +163,22 @@ def seed_data():
                     db.add(dk)
                     lhp.so_luong_da_dang_ky += 1
                 
-                # Cố tình đưa 1 sinh viên Hà Đông (SV_HD_001) sang đăng ký học chéo tại CG hoặc TN
+                # Cố tình đưa 1 sinh viên Hà Đông (SV_HD_001) sang đăng ký học chéo tại CG hoặc NT
                 if site_code != 'HD':
                     dk_cheo = DangKy(ma_sv="SV_HD_001", ma_lop_hp=lhp.ma_lop_hp, ma_co_so=site_code)
                     db.add(dk_cheo)
                     lhp.so_luong_da_dang_ky += 1
 
             db.commit()
-            print(f"  ✅ Đã sinh xong dữ liệu phân mảnh (kèm Lịch Học và Đăng ký) cho Node {site_code}")
+            print(f"  Da sinh xong du lieu phan manh (kem Lich Hoc va Dang ky) cho Node {site_code}")
         except Exception as e:
             db.rollback()
-            print(f"  ❌ Lỗi phân mảnh tại Node {site_code}: {e}")
+            print(f"  Loi phan manh tai Node {site_code}: {e}")
 
     for db in dbs.values():
         db.close()
         
-    print("\n🎉 HOÀN TẤT TOÀN BỘ QUY TRÌNH SEED DATA (Phiên bản Hoàn hảo)!")
+    print("\nHOAN TAT TOAN BO QUY TRINH SEED DATA!")
 
 if __name__ == "__main__":
     seed_data()

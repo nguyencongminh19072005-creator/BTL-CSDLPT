@@ -6,7 +6,7 @@ Dự án môn học **Cơ sở dữ liệu phân tán** - Học viện Công ngh
 Hệ thống được thiết kế để quản lý sinh viên, giảng viên, lớp học phần và nghiệp vụ đăng ký học phần trên mô hình cơ sở dữ liệu phân tán gồm 3 server (Sites):
 - **Site 1: Hà Đông (HD)** - Cổng 5435
 - **Site 2: Cầu Giấy (CG)** - Cổng 5433
-- **Site 3: Trục Ngọc (TN)** - Cổng 5434
+- **Site 3: Ngọc Trục (NT)** - Cổng 5434
 
 ## 🛠 Công nghệ sử dụng
 - **Ngôn ngữ:** Python 3.x
