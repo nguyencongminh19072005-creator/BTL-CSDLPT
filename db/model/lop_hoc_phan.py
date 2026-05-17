@@ -17,6 +17,10 @@ class LopHocPhan(Base):
     # TRỌNG TÂM: Cột version để dùng Optimistic Locking xử lý đồng thời
     version = Column(Integer, default=0, nullable=False)
 
+    __mapper_args__ = {
+        "version_id_col": version
+    }
+
     __table_args__ = (
         CheckConstraint('so_luong_da_dang_ky <= si_so_toi_da', name='check_siso_limit'),
     )

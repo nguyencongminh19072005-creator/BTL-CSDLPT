@@ -1,9 +1,10 @@
 import sys
 import os
+import psycopg2
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from db.config_db import SessionLocals as SessionLocal
-from db.model import LopHocPhan, HocPhan
+from db.query import get_lop_toan_truong_site
 
 def xem_danh_sach_lop_toan_truong():
     print("\n🔍 Đang quét dữ liệu từ các phân mảnh (Hà Đông, Cầu Giấy, Ngọc Trục)...")
@@ -14,21 +15,14 @@ def xem_danh_sach_lop_toan_truong():
     tong_so_lop = 0
 
     for site in sites:
-        session = SessionLocal[site]()
-        try:
-            # Gom dữ liệu từ Lớp học phần và Môn học
-            danh_sach = session.query(LopHocPhan, HocPhan).join(
-                HocPhan, LopHocPhan.ma_hp == HocPhan.ma_hp
-            ).all()
-            
-            for lop, hp in danh_sach:
-                si_so_str = f"{lop.so_luong_da_dang_ky}/{lop.si_so_toi_da}"
-                print(f"{lop.ma_lop_hp:<15} | {hp.ten_hp:<20} | {si_so_str:<10} | {site:<10}")
-                tong_so_lop += 1
-        except Exception as e:
-            print(f"❌ Lỗi truy xuất tại cơ sở {site}: {e}")
-        finally:
-            session.close()
+        danh_sach = get_lop_toan_truong_site(site)
+        for ma_lop_hp, ten_hp, so_luong_da_dang_ky, si_so_toi_da in danh_sach:
+            si_so_str = f"{so_luong_da_dang_ky}/{si_so_toi_da}"
+            print(f"{ma_lop_hp:<15} | {ten_hp:<20} | {si_so_str:<10} | {site:<10}")
+            tong_so_lop += 1
 
     print("-" * 65)
     print(f"✅ Tổng cộng: {tong_so_lop} lớp học phần trên toàn hệ thống.\n")
+
+if __name__ == "__main__":
+    xem_danh_sach_lop_toan_truong()

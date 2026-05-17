@@ -21,15 +21,19 @@ for site, url in DB_URLS.items():
     engines[site] = engine
     SessionLocals[site] = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-def get_db(site_code):
-    """Mở kết nối tới một site cụ thể và yield session (dùng cho FastAPI Depends)."""
-    if site_code not in SessionLocals:
+def get_connection(site_code):
+    """Trả về raw psycopg2 connection cho một site cụ thể."""
+    if site_code not in engines:
         raise ValueError(f"❌ Mã cơ sở '{site_code}' không tồn tại trong cấu hình.")
-    db = SessionLocals[site_code]()
+    return engines[site_code].raw_connection()
+
+def get_db(site_code):
+    """Mở kết nối tới một site cụ thể và yield connection SQL thuần (dùng cho FastAPI Depends)."""
+    conn = get_connection(site_code)
     try:
-        yield db
+        yield conn
     finally:
-        db.close()
+        conn.close()
 
 def init_all_dbs():
     """Tạo toàn bộ các bảng trong models.py trên cả 3 Server."""
